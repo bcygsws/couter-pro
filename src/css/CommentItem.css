@@ -1,0 +1,29 @@
+.box {
+    border: 1px solid #cccccc;
+    margin: 10px 0;
+    padding-left: 10px;
+}
+
+
+/* 当启用css模块化后(import styleItem from '')，这里所有的类样式都是私有的，如果想让类样式成为全局样式，只需要
+将类样式整个放在 :global(.类样式名称) 举例：:global(.title)。一旦添加global该类样式就恢复全局属性了。如果仍然需要
+私有的title类样式，再次书写一个.title类样式即可
+
+当使用了:global（）实现了全局的类样式，这个类样式不会被重命名，只有经过模块化使得私有的类样式，才会按照localIdentName:'[name]__[local]--[hash:base54:5]'定义的这个规则来重命名 name是当前的.css文件名，local为本地类样式名称
+*/
+
+:global(.title) {
+    text-align: center;
+    font-size: 16px;
+    color: red;
+}
+
+.title {
+    font-size: 12px;
+    color: green;
+}
+
+.body {
+    font-size: 14px;
+    color: red;
+}

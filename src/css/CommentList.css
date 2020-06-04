@@ -1,0 +1,16 @@
+/* .cmlist-title {
+    text-align: center;
+    color: red;
+    font-weight: 200;
+}
+ */
+
+
+/* 将.cmlist-title改为.title，会出现父子组件样式的混合覆盖的问题，如何解决？
+*/
+
+.title {
+    text-align: center;
+    color: red;
+    font-weight: 200;
+}
