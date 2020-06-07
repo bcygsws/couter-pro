@@ -21,15 +21,34 @@ export default class Counter extends React.Component {
   static propTypes = {
     initcount: PropTypes.number, //使用prop-types包，来进行校验，如果在父组件中添加的属性不是number数值型，则弹出警告
   };
+  /* 对比：react中的componentWillMount相当于vue中的created生命周期函数 */
+  // 钩子函数：在组件尚未挂载到页面上时执行的
+  // 此时，虚拟DOM也没有开始创建，在render阶段才开始渲染虚拟DOM
+  componentWillMount() {
+    // 输出结果为null,原因是:依照上面所说，此时虚拟DOM只是将要开始渲染，还没开始渲染
+    console.log(document.getElementById('myh3')); //null
+    //在main.js 中ReactDOM.render()中传入的属性initcount。如果多处定义，则多次分别输出：
+    // 第一次输出：null 3 第二次输出：null "哈哈，我是张翰啊" 原因是：该子组件在ReactDOM.render()被调用了两次
+    console.log(this.props.initcount);
+    // 验证在本阶段可以调用组件中自定义的函数
+    this.myselfFunc();
+  }
   render() {
     return (
       <div>
         <h1>这是Counter计数器组件</h1>
         <input type="button" value="+1" />
         <hr />
-        {/* 接收在父组件中，main.js中，向子组件传递的属性值 */}
-        <h3>当前的数量是：{this.props.initcount}</h3>
+        {/* 接收在父组件中，main.js中，ReactDOM.render()向子组件传递的属性值 */}
+        <h3 id="myh3">当前的数量是：{this.props.initcount}</h3>
       </div>
     );
   }
+  // 那么，与组件生命组件函数无关，在组件中自定义的函数在componentWillMount阶段能实现调用吗？
+  myselfFunc() {
+    console.log(
+      '这是一个与生命周期无关的自定义函数，验证其在componentWillMount阶段能否调用？',
+    );
+  }
+  componentDidMount() {}
 }
