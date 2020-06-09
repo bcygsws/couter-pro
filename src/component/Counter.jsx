@@ -8,7 +8,12 @@ export default class Counter extends React.Component {
   constructor(props) {
     super(props);
     // 初始化组件的私有状态-保存的是组件的私有数据
-    this.sate = {};
+    this.state = {
+      // 把外界传递过来的initcount，传递给this.state。这样就把count改为可读可写的属性。就能实现count值+1的操作了
+      // count: this.props.initcount,
+      // 注意：构造函数中props属性，不需要this.props引用。而是存在构造函数中定义了一个参数props，就可以直接调用了
+      count: props.initcount,
+    };
   }
   //   在封装一些组件时，组件内部肯定有一些数据是必须的。哪怕用户没有设置相关的启动参数，这时候，组件也应该为自己提供一个启动参数
   // 在react中，使用defaultProps设置组件的默认属性值
@@ -33,16 +38,22 @@ export default class Counter extends React.Component {
     // 验证在本阶段可以调用组件中自定义的函数
     this.myselfFunc();
   }
+  // 当执行到render函数生命周期阶段：开始渲染虚拟DOM了，完成了虚拟DOM的渲染，并存放在内存中，但是页面上尚未真正显示DOM元素
   render() {
+    // 在return之前，虚拟DOM也还没有创建。页面上也是空的，拿不到任何元素
+    console.log(document.getElementById('myh3')); //null
     return (
       <div>
         <h1>这是Counter计数器组件</h1>
-        <input type="button" value="+1" />
+        <input type="button" value="+1" id="btn" />
         <hr />
         {/* 接收在父组件中，main.js中，ReactDOM.render()向子组件传递的属性值 */}
+        {/* initcount是自增属性，而属性是只读的，为此我们需要借助组件的state，来修改谁 */}
         <h3 id="myh3">当前的数量是：{this.props.initcount}</h3>
+        <h3 id="myh3">当前的数量是：{this.state.count}</h3>
       </div>
     );
+    // 当return语句执行完，虚拟dom已经在内存中创建完成了，当仍然没有挂载到页面上
   }
   // 那么，与组件生命组件函数无关，在组件中自定义的函数在componentWillMount阶段能实现调用吗？
   myselfFunc() {
@@ -50,5 +61,24 @@ export default class Counter extends React.Component {
       '这是一个与生命周期无关的自定义函数，验证其在componentWillMount阶段能否调用？',
     );
   }
-  componentDidMount() {}
+  //当组件挂载到页面上之后，就进入这个生命周期函数。进入这个生命周期后，必然说明页面上已经有了可见的DOM元素了
+  componentDidMount() {
+    // 在这个函数中，可以操作页面上需要使用的DOM元素。
+    // 总结：如果要操作DOM元素，则至少在componentDidMounted阶段，相当于vue中的Mounted阶段
+    console.log(document.getElementById('myh3'));
+
+    // 原生的js实现点击事件，为什么非要在这个生命周期函数中加点击事件？原因这个是能够获取到虚拟DOM节点的最早的一个生命周期
+    document.getElementById('btn').onclick = () => {
+      console.log('ok'); //测试点击事件是否执行
+      // 点击后，报错：Uncaught TypeError: Cannot read property 'initcount' of undefined at HTMLInputElement.document.getElementById.onclick
+      console.log(this); //this指得就是括号外的被点击对象btn
+      // console.log(this.props);//undefined
+      // console.log(this.propps.initcount); //undefined
+      // this.propps.initcount++; //props中传入的属性值是可读的，无法改变，需要借用this.state私有数据
+      this.setState({
+        count: this.state.count+1,
+      });
+    };
+  }
+  // 当组件执行完，componentDidMount生命周期函数后，就进入到了运行中的状态。所以这个函数是函数创建阶段最后一个钩子
 }
