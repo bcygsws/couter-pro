@@ -37,11 +37,13 @@ export default class Counter extends React.Component {
     console.log(this.props.initcount);
     // 验证在本阶段可以调用组件中自定义的函数
     this.myselfFunc();
+    console.log(this);//在生命周期函数中this直接指得是Counter组件
   }
   // 当执行到render函数生命周期阶段：开始渲染虚拟DOM了，完成了虚拟DOM的渲染，并存放在内存中，但是页面上尚未真正显示DOM元素
   render() {
     // 在return之前，虚拟DOM也还没有创建。页面上也是空的，拿不到任何元素
     console.log(document.getElementById('myh3')); //null
+    console.log(this);//render仍然是生命周期函数，所以
     return (
       <div>
         <h1>这是Counter计数器组件</h1>
@@ -57,6 +59,7 @@ export default class Counter extends React.Component {
   }
   // 那么，与组件生命组件函数无关，在组件中自定义的函数在componentWillMount阶段能实现调用吗？
   myselfFunc() {
+    console.log(this);
     console.log(
       '这是一个与生命周期无关的自定义函数，验证其在componentWillMount阶段能否调用？',
     );
