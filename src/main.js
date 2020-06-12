@@ -14,7 +14,7 @@ import Counter from './component/Counter.jsx';
 // ReactDOM.render(content, document.getElementById('app'));
 ReactDOM.render(
   <div>
-    <Counter initcount={3}></Counter>
+    <Counter initcount={0}></Counter>
     <hr />
     {/* 父组件中没有传属性值，initcount，在子组件中渲染时，会检测是否定义了defaultProps属性就拿来使用，{this.props.initcount} */}
    {/*  <Counter initcount="哈哈，我是张翰啊"></Counter> */}

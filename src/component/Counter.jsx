@@ -37,13 +37,13 @@ export default class Counter extends React.Component {
     console.log(this.props.initcount);
     // 验证在本阶段可以调用组件中自定义的函数
     this.myselfFunc();
-    console.log(this);//在生命周期函数中this直接指得是Counter组件
+    console.log(this); //在生命周期函数中this直接指得是Counter组件
   }
   // 当执行到render函数生命周期阶段：开始渲染虚拟DOM了，完成了虚拟DOM的渲染，并存放在内存中，但是页面上尚未真正显示DOM元素
   render() {
     // 在return之前，虚拟DOM也还没有创建。页面上也是空的，拿不到任何元素
     console.log(document.getElementById('myh3')); //null
-    console.log(this);//render仍然是生命周期函数，所以
+    console.log(this); //render仍然是生命周期函数，所以
     return (
       <div>
         <h1>这是Counter计数器组件</h1>
@@ -65,10 +65,13 @@ export default class Counter extends React.Component {
     );
   }
   // 2.使用React提供的事件，事件点击--onClick={increment} 【按钮】自增的业务逻辑
+  // 特别注意：在React中改变state状态值，不要使用this.state.*=值。改变state状态值需要使用
+  // this.setState({state中定义的变量名：值});
   increment = () => {
     console.log(this); //非箭头函数时2undefined，箭头函数时表示组件
     this.setState({
-      count: this.props.initcount + 1,
+      // 构造器中this.state定义的组件私有状态，名称为count,一一对应，这里面也是count
+      count: this.state.count + 1,
     });
   };
   //当组件挂载到页面上之后，就进入这个生命周期函数。进入这个生命周期后，必然说明页面上已经有了可见的DOM元素了
@@ -93,4 +96,21 @@ export default class Counter extends React.Component {
     // 2.使用React提供的事件来实现 onClick  C大写
   }
   // 当组件执行完，componentDidMount生命周期函数后，就进入到了运行中的状态。所以这个函数是函数创建阶段最后一个钩子
+
+  // 从这里开始，我们就进入了组件运行中状态
+  // 判断组件是否需要更新
+
+  // nextProps和nextState将最新的属性值和状态值获取，分别在存放参数nextProps和参数nextState中
+  shouldComponentUpdate(nextProps, nextState) {
+    //   // Make sure to return true or false.
+    //   // 1.在shouldComponentUpdate中必须返回一个布尔值：true或者false,否则将报上面错误
+    //   // return true;
+    //   // return false;
+    //   // 2.如果返回值为false,则不会继续执行后面的生命周期函数，而是退回到了运行中状态，此时，由于后续的render函数并没有被调用，因此页面不会被更新。但是，组件的state状态已经被修改了
+    console.log(this.state.count + '==' + nextState.count);
+    //   // 功能需求：如果count值是偶数，则更新页面。如果count值是奇数，则不更新页面
+    // return this.state.count % 2 == 0 ? true : false;
+    // nextState中提供的永远是及时最新的state状态值
+    return nextState.count % 2 == 0 ? true : false;
+  }
 }
