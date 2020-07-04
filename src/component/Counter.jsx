@@ -4,6 +4,7 @@ import React from 'react';
 
 // propTypes属性校验，在15.*版本之后，已经从react包中分离出来，需要多装一个prop-types包做属性校验
 import PropTypes from 'prop-types';
+// ES6语法
 export default class Counter extends React.Component {
   constructor(props) {
     super(props);
@@ -57,18 +58,19 @@ export default class Counter extends React.Component {
     );
     // 当return语句执行完，虚拟dom已经在内存中创建完成了，当仍然没有挂载到页面上
   }
-  // 那么，与组件生命组件函数无关，在组件中自定义的函数在componentWillMount阶段能实现调用吗？
+  // 那么，与组件生命组件函数无关，在组件中自定义的函数在componentWillMount阶段能实现调用吗？是可以调用的
   myselfFunc() {
     console.log(this);
     console.log(
       '这是一个与生命周期无关的自定义函数，验证其在componentWillMount阶段能否调用？',
     );
   }
-  // 2.使用React提供的事件，事件点击--onClick={increment} 【按钮】自增的业务逻辑
+  // 2.使用React提供的事件，区别于JavaScript，事件名称采用驼峰命名法，例如：onClick,而不是onclick。事件点击--onClick={increment} 【按钮】自增的业务逻辑
   // 特别注意：在React中改变state状态值，不要使用this.state.*=值。改变state状态值需要使用
   // this.setState({state中定义的变量名：值});
   increment = () => {
     console.log(this); //非箭头函数时2undefined，箭头函数时表示组件
+    // 类似小程序中的事件，this.setState设置才能将state状态值更新，并且同步渲染到页面上
     this.setState({
       // 构造器中this.state定义的组件私有状态，名称为count,一一对应，这里面也是count
       count: this.state.count + 1,
