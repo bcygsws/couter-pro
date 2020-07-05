@@ -41,10 +41,13 @@ export default class Counter extends React.Component {
     console.log(this); //在生命周期函数中this直接指得是Counter组件
   }
   // 当执行到render函数生命周期阶段：开始渲染虚拟DOM了，完成了虚拟DOM的渲染，并存放在内存中，但是页面上尚未真正显示DOM元素
+  // 在组件运行阶段，每当调用render函数时，页面上的元素还是旧的
   render() {
     // 在return之前，虚拟DOM也还没有创建。页面上也是空的，拿不到任何元素
     console.log(document.getElementById('myh3')); //null
     console.log(this); //render仍然是生命周期函数，所以
+    // 更新阶段的render函数执行---短路运算符&& 和 ||
+    console.log(this.refs.h3 && this.refs.h3.innerHTML);
     return (
       <div>
         <h1>这是Counter计数器组件</h1>
@@ -52,8 +55,10 @@ export default class Counter extends React.Component {
         <hr />
         {/* 接收在父组件中，main.js中，ReactDOM.render()向子组件传递的属性值 */}
         {/* initcount是自增属性，而属性是只读的，为此我们需要借助组件的state，来修改谁 */}
-        <h3 id="myh3">当前的数量是：{this.props.initcount}</h3>
-        <h3 id="myh3">当前的数量是：{this.state.count}</h3>
+        <h3 id="myh3">
+          当前的数量是：{this.props.initcount}
+        </h3>
+        <h3 id="myh3" ref="h3">当前的数量是：{this.state.count}</h3>
       </div>
     );
     // 当return语句执行完，虚拟dom已经在内存中创建完成了，当仍然没有挂载到页面上
@@ -88,8 +93,8 @@ export default class Counter extends React.Component {
     //   // 点击后，报错：Uncaught TypeError: Cannot read property 'initcount' of undefined at HTMLInputElement.document.getElementById.onclick
     //   console.log(this); //使用普通的函数，this指得就是括号外的被点击对象btn,所以改用箭头函数,this就指向组件实例了
     //   // console.log(this.props);//undefined
-    //   // console.log(this.propps.initcount); //undefined
-    //   // this.propps.initcount++; //props中传入的属性值是可读的，无法改变，需要借用this.state私有数据
+    //   // console.log(this.props.initcount); //undefined
+    //   // this.props.initcount++; //props中传入的属性值是可读的，无法改变，需要借用this.state私有数据
     //   this.setState({
     //     count: this.state.count + 1,
     //   });
@@ -102,7 +107,7 @@ export default class Counter extends React.Component {
   // 从这里开始，我们就进入了组件运行中状态
   // 判断组件是否需要更新
 
-  // nextProps和nextState将最新的属性值和状态值获取，分别在存放参数nextProps和参数nextState中
+  // 最新的值要到componentDidUpdate钩子里才是最新的，提前获取最新值使用参数列表。nextProps和nextState将最新的属性值和状态值获取，分别在存放参数nextProps和参数nextState中
   shouldComponentUpdate(nextProps, nextState) {
     //   // Make sure to return true or false.
     //   // 1.在shouldComponentUpdate中必须返回一个布尔值：true或者false,否则将报上面错误
@@ -113,6 +118,22 @@ export default class Counter extends React.Component {
     //   // 功能需求：如果count值是偶数，则更新页面。如果count值是奇数，则不更新页面
     // return this.state.count % 2 == 0 ? true : false;
     // nextState中提供的永远是及时最新的state状态值
-    return nextState.count % 2 == 0 ? true : false;
+    // 先忽略需求，偶数更新，奇数不更新。让其一直可以更新，以方便观察后续的生命周期函数事件
+    // return nextState.count % 2 == 0 ? true : false;
+    return true;
+  }
+  // 知识点：组件将要更新以及ref的使用
+  // 组件将要更新，此时尚未更新。在进入这个生命周期函数中，内存中的虚拟DOM是旧的，页面上的DOM元素也是旧的
+  componentWillUpdate() {
+    // 经过打印分析，得到此时DOM上的打印节点都是旧的。应该慎重操作，可能操作的是旧DOM
+    // console.log(document.getElementById('myh3').innerHTML);//打印出来当前数量为0，还是旧的。页面初始打开后，点击+1,此时值已经变成1了
+    // 也可以不使用这种原生的方式来获取对象。回想vue中，在标签中定义ref="h3"，然后this.$refs.h3就可以拿到这个原生对象了。在react
+    // 中，也差不多。只是引用时，使用this.refs.h3就可以了，没有 $符号了
+    // console.log(this.refs.h3.innerHTML);
+  }
+  //那么问题来了？执行到更新阶段时，会再一次执行render函数，上面的this.refs.h3.innerHTML输出时，怎么处理？还放在第一个render函数中，可能获取不到。但是在这个类中只能写一个render函数。需要借助短路运算符来做连接
+  // 组件完成了更新，这是state中的数据，虚拟DOM,页面中的DOM都是最新的了，此时可以放心大胆的操作页面了
+  componentDidUpdate() {
+    console.log(this.refs.h3.innerHTML);//此时输出是最新的页面DOM了
   }
 }
