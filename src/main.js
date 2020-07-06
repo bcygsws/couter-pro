@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 import Counter from './component/Counter.jsx';
 // 导入子组件TestReceiveProps
 import Test from './component/testReceiveProps.jsx';
+// 导入子组件BindThis
+import BindThis from './component/BindThis.jsx';
 // const l1 = React.createElement('li', null, 'one');//列表项不设置key，将提示警告:Warning: Each child in a list should have a unique "key" prop.
 // const l1 = React.createElement('li', { key: 1 }, 'one'); //列表项不设置key，将提示警告:Warning: Each child in a list should have a unique "key" prop.
 // const l2 = React.createElement('li', { key: 2 }, 'two');
@@ -22,7 +24,9 @@ ReactDOM.render(
     <hr />{' '}
     {/* 父组件中没有传属性值，initcount，在子组件中渲染时，会检测是否定义了defaultProps属性就拿来使用，{this.props.initcount} */}{' '}
     {/*  <Counter initcount="哈哈，我是张翰啊"></Counter> */} 
-    <Test></Test>
+    <Test param={1}></Test>
+    <hr/>
+    <BindThis></BindThis>
   </div>,
   document.getElementById('app'),
 );

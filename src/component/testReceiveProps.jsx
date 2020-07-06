@@ -7,6 +7,8 @@ export default class TestReceiveProps extends React.Component {
     this.state = {
       msg: '这是父组件中的msg消息',
     };
+    // 在构造函数中props可以直接接收当前组件所在父组件被传入的属性值
+    console.log(props);
   }
   changedValue = () => {
     console.log(this);
